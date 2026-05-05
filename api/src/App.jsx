@@ -7,14 +7,24 @@ const App = () => {
   const [selectuser, selectuserFn] = useState(null);
   const [searchinput, setsearchinput] = useState("");
   const [search, setsearch] = useState("");
+  const[loading, setloading]=useState(false);
+  const[error,seterror]=useState(null);
 
   useEffect(() => {
+    setloading(true);
+    seterror(null);
+
     axios.get("https://jsonplaceholder.typicode.com/users")
+
       .then((res) => {
         setdata(res.data);
+        setloading(false)
         console.log(res.data);
       })
       .catch((err) => {
+        setloading(false);
+        seterror("Something went wrong...");
+
         console.log(err);
       });
   }, []);
@@ -32,6 +42,9 @@ const App = () => {
   const filterdata = data.filter((user) =>
     user.username.toLowerCase().includes(search.toLowerCase())
   );
+
+  if(loading) return <h2>Loading....</h2>
+  if(error) return <h2>{error}</h2>
 
   return (
     <div>
