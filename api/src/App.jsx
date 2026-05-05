@@ -5,11 +5,14 @@ const App = () => {
 
   const [data, setdata] = useState([]);
   const [selectuser, selectuserFn] = useState(null);
+  const [searchinput, setsearchinput] = useState("");
+  const [search, setsearch] = useState("");
 
   useEffect(() => {
     axios.get("https://jsonplaceholder.typicode.com/users")
       .then((res) => {
         setdata(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -26,15 +29,31 @@ const App = () => {
       })
   };
 
+  const filterdata = data.filter((user) =>
+    user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div>
 
       <h1>Assignment 1</h1>
 
-      
+      <input
+        type='text'
+        placeholder='search the username'
+        value={searchinput}
+        onChange={(e) => setsearchinput(e.target.value)}
+      />
+
+      <button onClick={() => setsearch(searchinput)}>
+        Search
+      </button>
+
+      {/* ✅ LIST */}
       {!selectuser && (
-        data.map((item) => (
+        filterdata.map((item) => (   // 🔥 FIX HERE
           <div key={item.id}>
+            <h3>username:{item.username}</h3>
             <h3>Name: {item.name}</h3>
             <p>Email: {item.email}</p>
             <p>City: {item.address.city}</p>
@@ -46,7 +65,7 @@ const App = () => {
         ))
       )}
 
-     
+      {/* ✅ DETAIL */}
       {selectuser && (
         <div>
           <h2>User Details</h2>
@@ -54,7 +73,6 @@ const App = () => {
           <p>Website: {selectuser.website}</p>
           <p>Company: {selectuser.company.name}</p>
 
-         
           <button onClick={() => selectuserFn(null)}>
             Back
           </button>
